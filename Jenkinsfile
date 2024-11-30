@@ -1,5 +1,3 @@
-
-
 pipeline {
     environment {
         registry = "noel135/img-repo"
