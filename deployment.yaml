@@ -1,0 +1,149 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{"deployment.kubernetes.io/revision":"1"},"creationTimestamp":"2024-11-12T07:22:32Z","generation":1,"name":"sprgboot-app","namespace":"noelspg","resourceVersion":"382483811","uid":"0d5c024f-da26-4204-a6c8-77a0ac37b370"},"spec":{"progressDeadlineSeconds":600,"replicas":1,"revisionHistoryLimit":10,"selector":{"matchLabels":{"app":"sprgboot-app"}},"strategy":{"rollingUpdate":{"maxSurge":"25%","maxUnavailable":"25%"},"type":"RollingUpdate"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"sprgboot-app"}},"spec":{"containers":[{"image":"noel135/img-repo:24","imagePullPolicy":"Always","name":"sprgboot-app","ports":[{"containerPort":8090,"protocol":"TCP"}],"resources":{},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File"}],"dnsPolicy":"ClusterFirst","restartPolicy":"Always","schedulerName":"default-scheduler","securityContext":{},"terminationGracePeriodSeconds":30}}},"status":{"availableReplicas":1,"conditions":[{"lastTransitionTime":"2024-11-12T07:22:36Z","lastUpdateTime":"2024-11-12T07:22:36Z","message":"Deployment has minimum availability.","reason":"MinimumReplicasAvailable","status":"True","type":"Available"},{"lastTransitionTime":"2024-11-12T07:22:32Z","lastUpdateTime":"2024-11-12T07:22:36Z","message":"ReplicaSet \"sprgboot-app-788966476d\" has successfully progressed.","reason":"NewReplicaSetAvailable","status":"True","type":"Progressing"}],"observedGeneration":1,"readyReplicas":1,"replicas":1,"updatedReplicas":1}}
+  creationTimestamp: "2024-11-13T11:46:26Z"
+  generation: 1
+  name: spg-helloworld
+  namespace: tomcat-new
+  resourceVersion: "383600038"
+  uid: f48df83d-1c0d-4820-a1f7-9ab34e18972d
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: spg-helloworld
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: spg-helloworld
+    spec:
+      containers:
+      - image: noel135/img-repo:34
+        imagePullPolicy: Always
+        name: spg-helloworld
+        ports:
+        - containerPort: 8090
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2024-11-13T11:46:34Z"
+    lastUpdateTime: "2024-11-13T11:46:34Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2024-11-13T11:46:26Z"
+    lastUpdateTime: "2024-11-13T11:46:34Z"
+    message: ReplicaSet "sprgboot-app-6d98b8fb86" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 1
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"sample-app-service","namespace":"noelapp"},"spec":{"ports":[{"port":8082,"protocol":"TCP","targetPort":8082}],"selector":{"app":"sample-app"},"type":"ClusterIP"}}
+  creationTimestamp: "2024-11-06T17:36:46Z"
+  name: spg-helloworld
+  namespace: tomcat-new
+  resourceVersion: "381473300"
+  uid: 27d26d6f-1e54-4b1b-a2e1-73fd6692f0a6
+spec:
+  clusterIP: 10.245.13.67
+  clusterIPs:
+  - 10.245.13.67
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 8090
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app: spg-helloworld
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"networking.istio.io/v1beta1","kind":"Gateway","metadata":{"annotations":{},"name":"noelgw","namespace":"noelapp"},"spec":{"selector":{"istio":"ingressgateway"},"servers":[{"hosts":["noelapp.com"],"port":{"name":"noelport","number":80,"protocol":"HTTP"}}]}}
+  creationTimestamp: "2024-11-06T17:42:39Z"
+  generation: 1
+  name: spg-helloworldgw
+  namespace: tomcat-new
+  resourceVersion: "377351496"
+  uid: f363bcf6-f315-4daa-8f05-fee2c38bd66c
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - hosts:
+    - spg-helloworld.com
+    port:
+      name: noelport
+      number: 80
+      protocol: HTTP
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"networking.istio.io/v1beta1","kind":"VirtualService","metadata":{"annotations":{},"name":"noelvs","namespace":"noelapp"},"spec":{"gateways":["noelgw"],"hosts":["noelapp.com"],"http":[{"match":[{"uri":{"prefix":"/"}}],"route":[{"destination":{"host":"sample-app-service.noelapp.svc.cluster.local","port":{"number":8082}}}]}]}}
+  creationTimestamp: "2024-11-06T17:42:39Z"
+  generation: 4
+  name: spg-helloworldvs
+  namespace: tomcat-new
+  resourceVersion: "381473886"
+  uid: 357c3490-3ca8-4a7c-a050-c9f0c32959f2
+spec:
+  gateways:
+  - spg-helloworldgw
+  hosts:
+  - spg-helloworld.com
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: spg-helloworld.tomcat-new.svc.cluster.local
+        port:
+          number: 8090
