@@ -22,7 +22,7 @@ pipeline {
         stage('Build with Maven') {
             steps {
                 script {
-                    sh "chmod 755 /var/jenkins_home/workspace/sample/mvnw"
+                    // sh "chmod 755 /var/jenkins_home/workspace/sample/mvnw"
                     sh "./mvnw clean package" // Run Maven clean package to build the JAR/WAR file
                 }
             }
