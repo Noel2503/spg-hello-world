@@ -23,7 +23,7 @@ pipeline {
             steps {
                 script {
                     // sh "chmod 755 /var/jenkins_home/workspace/sample/mvnw"
-                    sh "./mvn clean package" // Run Maven clean package to build the JAR/WAR file
+                    sh "mvn clean package" // Run Maven clean package to build the JAR/WAR file
                 }
             }
         }
