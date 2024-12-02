@@ -1,9 +1,19 @@
-FROM openjdk:8-jdk-alpine
-VOLUME /tmp
+# Use the official Tomcat image with JDK 8
+FROM noel135/sample:latest
 
-ARG JAR_FILE
-ADD target/spring-boot-hello-world-1.0.0-SNAPSHOT.jar app.jar
+# Set environment variables
+ENV DEPLOY_DIR=/usr/local/tomcat/webapps \
+    WAR_NAME=ROOT.war \
+    JAVA_OPTS=""
 
-ENV JAR_OPTS=""
-ENV JAVA_OPTS=""
-ENTRYPOINT exec java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar $JAR_OPTS
+# Argument to pass the WAR file during build
+ARG WAR_FILE
+
+# Copy the WAR file to Tomcat's webapps directory
+COPY ${WAR_FILE} ${DEPLOY_DIR}/${WAR_NAME}
+
+# Expose Tomcat port
+EXPOSE 8080
+
+# Start Tomcat with the option to pass JVM options
+ENTRYPOINT ["sh", "-c", "catalina.sh run $JAVA_OPTS"]
