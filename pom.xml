@@ -202,6 +202,7 @@
 				<version>2.22.2</version>
 				<configuration>
 					<groups>${testcase.groups}</groups>
+					<forkCount>0</forkCount>
 				</configuration>
 			</plugin>
 		</plugins>
