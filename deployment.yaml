@@ -9,7 +9,7 @@ metadata:
   creationTimestamp: "2024-11-13T11:46:26Z"
   generation: 1
   name: spg-helloworld
-  namespace: tomcat-new
+  namespace: noel-tomcat
   resourceVersion: "383600038"
   uid: f48df83d-1c0d-4820-a1f7-9ab34e18972d
 spec:
@@ -74,7 +74,7 @@ metadata:
       {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"sample-app-service","namespace":"noelapp"},"spec":{"ports":[{"port":8082,"protocol":"TCP","targetPort":8082}],"selector":{"app":"sample-app"},"type":"ClusterIP"}}
   creationTimestamp: "2024-11-06T17:36:46Z"
   name: spg-helloworld
-  namespace: tomcat-new
+  namespace: noel-tomcat
   resourceVersion: "381473300"
   uid: 27d26d6f-1e54-4b1b-a2e1-73fd6692f0a6
 spec:
@@ -106,7 +106,7 @@ metadata:
   creationTimestamp: "2024-11-06T17:42:39Z"
   generation: 1
   name: spg-helloworldgw
-  namespace: tomcat-new
+  namespace: noel-tomcat
   resourceVersion: "377351496"
   uid: f363bcf6-f315-4daa-8f05-fee2c38bd66c
 spec:
@@ -130,7 +130,7 @@ metadata:
   creationTimestamp: "2024-11-06T17:42:39Z"
   generation: 4
   name: spg-helloworldvs
-  namespace: tomcat-new
+  namespace: noel-tomcat
   resourceVersion: "381473886"
   uid: 357c3490-3ca8-4a7c-a050-c9f0c32959f2
 spec:
@@ -144,6 +144,6 @@ spec:
         prefix: /
     route:
     - destination:
-        host: spg-helloworld.tomcat-new.svc.cluster.local
+        host: spg-helloworld.noel-tomcat.svc.cluster.local
         port:
           number: 8090
