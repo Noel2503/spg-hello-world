@@ -22,15 +22,18 @@ pipeline {
         stage('Build with Maven') {
             steps {
                 script {
-                    // sh "chmod 755 /var/jenkins_home/workspace/sample/mvnw"
-                    sh "mvn clean package" // Run Maven clean package to build the JAR/WAR file
+                    sh "mvn clean package -Dpackaging=war" // Build a WAR file
                 }
             }
         }
-        stage('Building our image') {
+        stage('Building Docker Image with WAR') {
             steps {
                 script {
-                    dockerImage = docker.build registry + ":$docker_version"
+                    // Build the Docker image based on Tomcat and include the WAR
+                    dockerImage = docker.build registry + ":$docker_version", """
+                    --build-arg WAR_FILE=target/*.war \
+                    -f Dockerfile .
+                    """
                 }
             }
         }
@@ -57,7 +60,7 @@ pipeline {
                 }
             }
         }
-        stage('Update Deployment file to GitHub') {
+        stage('Update Deployment File to GitHub') {
             steps {
                 withCredentials([string(credentialsId: 'git-spgboot', variable: 'git_token_test')]) {
                     sh '''
@@ -73,19 +76,17 @@ pipeline {
         stage('Apply Kubernetes YAML') {
             steps {
                 script {
-                       // Check if the deployment file exists
                     if (fileExists("${deployment_file}")) {
                         echo "Deployment file found. Deleting and applying file"
 
                         withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-                        // Delete and apply the Kubernetes YAML
-                        sh "kubectl delete -f ${deployment_file} -n tomcat-new --ignore-not-found"
-                        sh "kubectl apply -f ${deployment_file} -n tomcat-new"
+                            sh "kubectl delete -f ${deployment_file} -n tomcat-new --ignore-not-found"
+                            sh "kubectl apply -f ${deployment_file} -n tomcat-new"
                         }
                     } else {
-                          error "Deployment file not found. Applying."
-                          sh "kubectl apply -f ${deployment_file} -n tomcat-new"
-                      }
+                        error "Deployment file not found. Applying."
+                        sh "kubectl apply -f ${deployment_file} -n tomcat-new"
+                    }
                 }
             }
         }
