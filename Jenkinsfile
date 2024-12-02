@@ -22,7 +22,7 @@ pipeline {
         stage('Build with Maven') {
             steps {
                 script {
-                    sh "mvn clean package -Dpackaging=war" // Build a WAR file
+                    sh "mvn clean package -Dpackaging=war -DskipTests -DargLine="-Xmx1024m -XX:MaxPermSize=256m"" // Build a WAR file
                 }
             }
         }
