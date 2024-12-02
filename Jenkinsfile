@@ -30,10 +30,8 @@ pipeline {
             steps {
                 script {
                     // Build the Docker image based on Tomcat and include the WAR
-                    dockerImage = docker.build registry + ":$docker_version", """
-                    --build-arg WAR_FILE=target/*.war \
-                    -f Dockerfile .
-                    """
+                    dockerImage = docker.build("${registry}:${docker_version}", 
+                    "--build-arg WAR_FILE=target/*.war -f Dockerfile .")
                 }
             }
         }
